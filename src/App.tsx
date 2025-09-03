@@ -1,32 +1,58 @@
-import React, {useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import './App.scss';
 import { GoodsList } from './GoodsList';
 
 import { getAll, get5First, getRed } from './api/goods';
-import {Good} from './types/Good';
+import { Good } from './types/Good';
 // or
 // import * as goodsAPI from './api/goods';
 
 export const App: React.FC = () => {
   const [goods, setGoods] = useState<Good[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLoadGood = () => {
-    return getAll().then(handleLoadAll => {
-      setGoods(handleLoadAll);
-    });
-  };
+  const handleLoadGoods = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
 
-  const handle5FirstGood = () => {
-    return get5First().then(goods5 => {
-      setGoods(goods5);
-    });
-  };
+    try {
+      const data = await getAll();
+      setGoods(data);
+    } catch (err) {
+      setError('Could not load goods');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const handleGoodRed = () => {
-    return getRed().then(goodsRed => {
-      setGoods(goodsRed);
-    });
-  };
+  const handle5FirstGoods = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const data5 = await get5First();
+      setGoods(data5);
+    } catch (err) {
+      setError('Could not load goods');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleGoodRed = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const dataRed = await getRed();
+      setGoods(dataRed);
+    } catch (err) {
+      setError('Could not load goods');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -35,7 +61,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="all-button"
-        onClick={handleLoadGood}
+        onClick={handleLoadGoods}
       >
         Load all goods
       </button>
@@ -43,7 +69,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         data-cy="first-five-button"
-        onClick={handle5FirstGood}
+        onClick={handle5FirstGoods}
       >
         Load 5 first goods
       </button>
@@ -55,8 +81,10 @@ export const App: React.FC = () => {
       >
         Load red goods
       </button>
+      {isLoading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <GoodsList goods={goods}/>
+      <GoodsList goods={goods} />
     </div>
-  )
+  );
 };
