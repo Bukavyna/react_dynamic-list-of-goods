@@ -18,6 +18,7 @@ export const App: React.FC = () => {
 
     try {
       const data = await getAll();
+
       setGoods(data);
     } catch (err) {
       setError('Could not load goods');
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
 
     try {
       const data5 = await get5First();
+
       setGoods(data5);
     } catch (err) {
       setError('Could not load goods');
@@ -46,6 +48,7 @@ export const App: React.FC = () => {
 
     try {
       const dataRed = await getRed();
+
       setGoods(dataRed);
     } catch (err) {
       setError('Could not load goods');
@@ -62,6 +65,7 @@ export const App: React.FC = () => {
         type="button"
         data-cy="all-button"
         onClick={handleLoadGoods}
+        disabled={isLoading}
       >
         Load all goods
       </button>
@@ -70,6 +74,7 @@ export const App: React.FC = () => {
         type="button"
         data-cy="first-five-button"
         onClick={handle5FirstGoods}
+        disabled={isLoading}
       >
         Load 5 first goods
       </button>
@@ -78,6 +83,7 @@ export const App: React.FC = () => {
         type="button"
         data-cy="red-button"
         onClick={handleGoodRed}
+        disabled={isLoading}
       >
         Load red goods
       </button>
